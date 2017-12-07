@@ -1,0 +1,28 @@
+import csv
+import collections
+
+arquivo = open('brasil.csv', encoding='utf-8') #abre arquivo csv
+populacao = collections.Counter() #cria contador para população
+area_estado = collections.Counter() #cria contador para área do estado
+densidade = collections.Counter() #cria contador para a densidade demografica
+
+#função para calcular a densidade
+for registro in csv.DictReader(arquivo): 
+    populacao[registro['estado']] += int(registro['habitantes'])
+    area_estado[registro['estado']] += float(registro['area'])
+    densidade[registro['estado']] = int(populacao[registro['estado']])/ float(area_estado[registro['estado']])
+
+#mostra estado, considerando o numero de habitantes, do maior para o menor e a densidade com duas casas decimais
+for estado,habitantes in populacao.most_common():
+    print([estado, habitantes, '%.2f'%densidade[estado]])
+    
+#cria csv de saida com o resultado
+arquivo_saida = open('densidade2.csv', mode='w', encoding='utf-8')
+escritor = csv.writer(arquivo_saida, lineterminator='\n')
+escritor.writerow(['estado', 'habitantes', 'densidade demografica'])#titulo das colunas
+for estado, habitantes in populacao.most_common():
+    escritor.writerow([estado, habitantes, '%.2f'%densidade[estado]])#conteúdo das colunas
+arquivo_saida.close()
+    
+
+
